@@ -1,0 +1,170 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #1e1e2f;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.sidebar .user-profile {
+  text-align: center;
+}
+
+.sidebar h2 {
+  margin-top: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.sidebar p {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Chat Section */
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.chat-area {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #eef1f6;
+}
+
+/* Chat Input Area */
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.chat-input-area button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  margin-left: 0.75rem;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.chat-input-area button:hover {
+  color: #000;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .chat-section {
+    width: 100%;
+  }
+
+  .chat-input-area {
+    padding: 0.75rem;
+  }
+
+  .chat-input-area input {
+    font-size: 0.95rem;
+  }
+}
+/* Responsive for Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .chat-section {
+    width: calc(100% - 200px);
+  }
+}
+/* Responsive for Desktop */
+@media (min-width: 1025px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .chat-section {
+    width: calc(100% - 250px);
+  }
+}
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  .sidebar {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+  }
+
+  .chat-header, .chat-input-area {
+    background-color: #2c2c2c;
+    border-color: #444;
+  }
+
+  .chat-area {
+    background-color: #202020;
+  }
+
+  .chat-input-area input {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+  }
+
+  .chat-input-area button {
+    color: #bbb;
+  }
+
+  .chat-input-area button:hover {
+    color: #fff;
+  }
+}

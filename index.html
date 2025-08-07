@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Knowbly – AI Chatbot</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar (can be used for user info or settings later) -->
+    <aside class="sidebar">
+      <div class="user-profile">
+        <i class="fas fa-user-circle fa-3x"></i>
+        <h2>Knowbly</h2>
+        <p>AI Chat Assistant</p>
+      </div>
+    </aside>
+
+    <!-- Chat Section -->
+    <section class="chat-section">
+      <header class="chat-header">
+        <h1>🤖 Knowbly</h1>
+        <p>Your AI-powered chat companion</p>
+      </header>
+
+      <main class="chat-area" id="chat-area">
+        <!-- Chat messages will appear here -->
+      </main>
+
+      <form id="chat-form" class="chat-input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required />
+        <button type="button" id="voice-btn"><i class="fas fa-microphone"></i></button>
+        <button type="submit" id="send-btn"><i class="fas fa-paper-plane"></i></button>
+      </form>
+    </section>
+  </div>
+</body>
+</html>
