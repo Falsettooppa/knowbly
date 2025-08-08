@@ -1,0 +1,34 @@
+/* Chat Messages */
+.message {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .message.user {
+    justify-content: flex-end;
+  }
+  
+  .message.ai {
+    justify-content: flex-start;
+  }
+  
+  .message-bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  .message.user .message-bubble {
+    background-color: #4f93f6;
+    color: white;
+    border-bottom-right-radius: 0;
+  }
+  
+  .message.ai .message-bubble {
+    background-color: #e5e5ea;
+    color: black;
+    border-bottom-left-radius: 0;
+  }
+  
