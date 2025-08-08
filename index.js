@@ -64,6 +64,17 @@ chatForm.addEventListener("submit", async (e) => {
   messages.push({ sender: "ai", text: aiText });
   addMessage("ai", aiText);
 });
+const fileInput = document.getElementById("file-input");
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (file) {
+    messages.push({ sender: "user", text: `📎 Sent file: ${file.name}` });
+    addMessage("user", `📎 Sent file: ${file.name}`);
+    fileInput.value = ""; // reset so same file can be re-selected
+  }
+});
+
 
 
 let currentModelIndex = 0;
