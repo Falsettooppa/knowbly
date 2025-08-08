@@ -9,6 +9,25 @@ const voiceBtn = document.getElementById("voice-btn");
 // ===== Store chat messages =====
 let messages = []; // { sender: 'user' | 'ai', text: '...' }
 
+
+// Save messages to localStorage
+function saveMessages() {
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+}
+
+// Load messages from localStorage
+function loadMessages() {
+    const stored = localStorage.getItem("chatMessages");
+    if (stored) {
+        messages = JSON.parse(stored);
+        messages.forEach(m => addMessage(m.sender, m.text));
+    }
+}
+
+// Call on page load
+loadMessages();
+
+
 // ===== Function to render messages =====
 function addMessage(sender, text) {
   const messageEl = document.createElement("div");
@@ -22,7 +41,10 @@ function addMessage(sender, text) {
 
   chatArea.appendChild(messageEl);
   chatArea.scrollTop = chatArea.scrollHeight; // Auto scroll
+
+  saveMessages();
 }
+
 
 // ===== Handle user sending a message =====
 chatForm.addEventListener("submit", async (e) => {
@@ -38,13 +60,13 @@ chatForm.addEventListener("submit", async (e) => {
   // AI response
   const aiText = await getAIResponse(text);
 
-  // Remove "Thinking..." message and replace
-//   chatArea.lastChild.remove();
+  // chatArea.lastChild.remove();
   messages.push({ sender: "ai", text: aiText });
   addMessage("ai", aiText);
 });
 
 
+let currentModelIndex = 0;
 
 // ===== AI reply function =====
 async function getAIResponse(userMessage) {
@@ -57,7 +79,6 @@ async function getAIResponse(userMessage) {
         "nousresearch/nous-hermes-2-mistral-7b:free"
       ];
       
-    let currentModelIndex = 0;
   
     const payload = {
       model: "mistralai/mistral-7b-instruct:free",
@@ -97,6 +118,6 @@ async function getAIResponse(userMessage) {
       return "Oops! Something went wrong with the AI service.";
     }
   }
-})
 
-// TODO: persist message on reload
+//   end of DOMContentLoaded
+})
