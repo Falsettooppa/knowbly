@@ -128,7 +128,9 @@ voiceBtn.addEventListener("click", () => {
     return;
   }
 
-  const recognition = new webkitSpeechRecognition();
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+//   const recognition = new webkitSpeechRecognition();
   recognition.lang = "en-US"; // language to use
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
