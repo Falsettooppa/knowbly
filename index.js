@@ -9,20 +9,54 @@ const voiceBtn = document.getElementById("voice-btn");
 // ===== Store chat messages =====
 let messages = []; // { sender: 'user' | 'ai', text: '...' }
 
+// ===== Chat sessions (new) =====
+let chatSessions = JSON.parse(localStorage.getItem('chatSessions') || '[]');
+let currentSessionId = Date.now();
+
 
 // Save messages to localStorage
 function saveMessages() {
     localStorage.setItem("chatMessages", JSON.stringify(messages));
+
+    // Also persist into chatSessions (session-aware)
+    try {
+      const idx = chatSessions.findIndex(s => s.id === currentSessionId);
+      if (idx !== -1) {
+        chatSessions[idx].messages = messages;
+        // set title from first user message if none
+        if (!chatSessions[idx].title && messages.length) {
+          const firstUser = messages.find(m => m.sender === 'user');
+          if (firstUser && firstUser.text) {
+            chatSessions[idx].title = firstUser.text.slice(0, 30) + (firstUser.text.length > 30 ? '...' : '');
+          }
+        }
+      } else {
+        chatSessions.push({
+          id: currentSessionId,
+          title: messages[0] && messages[0].text ? messages[0].text.slice(0, 30) : 'New Chat',
+          messages: messages
+        });
+      }
+      localStorage.setItem('chatSessions', JSON.stringify(chatSessions));
+    } catch (err) {
+      console.warn("session save error", err);
+    }
 }
 
+// Load messages from localStorage
 // Load messages from localStorage
 function loadMessages() {
     const stored = localStorage.getItem("chatMessages");
     if (stored) {
         messages = JSON.parse(stored);
-        messages.forEach(m => addMessage(m.sender, m.text));
+        // ✅ Only render here if we are *not* going to reconcile sessions
+        // This prevents duplicates when reconcileSessionsAfterLoad runs.
+        if (!localStorage.getItem('chatSessions')) {
+            messages.forEach(m => addMessage(m.sender, m.text));
+        }
     }
 }
+
 
 // Call on page load
 loadMessages();
@@ -208,6 +242,86 @@ voiceBtn.addEventListener("click", () => {
   };
 });
 
+
+/* ========= Added: Chat history UI hookup =========
+   These functions initialize the sidebar history list,
+   handle creating new sessions and loading existing ones.
+   They do not remove or mutate your prior UI elements. */
+
+const historyListEl = document.getElementById('history-list');
+const newChatBtn = document.getElementById('new-chat-btn');
+
+function saveSessions() {
+  localStorage.setItem('chatSessions', JSON.stringify(chatSessions));
+}
+
+function loadChatHistory() {
+  if (!historyListEl) return;
+  historyListEl.innerHTML = "";
+  chatSessions.forEach(sess => {
+    const li = document.createElement('li');
+    li.textContent = sess.title || 'Untitled Chat';
+    li.dataset.id = sess.id;
+    li.addEventListener('click', () => {
+      loadSession(sess.id);
+    });
+    historyListEl.appendChild(li);
+  });
+}
+
+function loadSession(id) {
+  const sess = chatSessions.find(s => s.id === id);
+  if (!sess) return;
+  currentSessionId = sess.id;
+  messages = sess.messages || [];
+  chatArea.innerHTML = "";
+  messages.forEach(m => addMessage(m.sender, m.text));
+}
+
+function createNewSession() {
+  currentSessionId = Date.now();
+  const newSess = { id: currentSessionId, title: "New Chat", messages: [] };
+  chatSessions.push(newSess);
+  saveSessions();
+  loadChatHistory();
+  loadSession(currentSessionId);
+}
+
+/* Reconcile legacy 'chatMessages' with chatSessions:
+   If user already has sessions, load last session; else create initial session. */
+(function reconcileSessionsAfterLoad(){
+  try {
+    // ensure chatSessions reflects storage
+    chatSessions = JSON.parse(localStorage.getItem('chatSessions') || '[]');
+
+    if (chatSessions.length === 0) {
+      // no sessions saved yet: create one using existing messages (legacy)
+      currentSessionId = Date.now();
+      chatSessions.push({
+        id: currentSessionId,
+        title: messages.find(m => m.sender === 'user')?.text?.slice(0,30) || 'New Chat',
+        messages: messages
+      });
+      saveSessions();
+    } else {
+      // sessions exist: load last session (replace legacy messages)
+      const last = chatSessions[chatSessions.length - 1];
+      currentSessionId = last.id;
+      messages = last.messages || [];
+      chatArea.innerHTML = "";
+      messages.forEach(m => addMessage(m.sender, m.text));
+    }
+    loadChatHistory();
+  } catch (e) {
+    console.warn("reconcileSessionsAfterLoad error", e);
+    loadChatHistory();
+  }
+})();
+
+/* Hook up New Chat button if present */
+if (newChatBtn) {
+  newChatBtn.addEventListener('click', createNewSession);
+}
 
 //   end of DOMContentLoaded
 })
