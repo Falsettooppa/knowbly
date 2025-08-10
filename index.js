@@ -64,6 +64,57 @@ chatForm.addEventListener("submit", async (e) => {
   messages.push({ sender: "ai", text: aiText });
   addMessage("ai", aiText);
 });
+const fileInput = document.getElementById("file-input");
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (file) {
+    // === New integrated file upload handling ===
+    const API_KEY = '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';
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      const contentType = file.type;
+
+      // Show file info in chat
+      messages.push({ sender: "user", text: `📎 Uploaded file: ${file.name}` });
+      addMessage("user", `📎 Uploaded file: ${file.name}`);
+
+      // Send to OpenRouter with multimodal-style payload
+      const payload = {
+        model: "mistralai/mistral-7b-instruct:free",
+        messages: [
+          { role: "system", content: "You are Knowbly." },
+          { role: "user", content: "Please analyze the uploaded file." },
+          { role: "user", content: { file: `data:${contentType};base64,${base64}` } }
+        ]
+      };
+
+      try {
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content || "No reply.";
+        messages.push({ sender: "ai", text: reply });
+        addMessage("ai", reply);
+      } catch (err) {
+        console.error("File upload error:", err);
+        messages.push({ sender: "ai", text: "❌ Failed to process the uploaded file." });
+        addMessage("ai", "❌ Failed to process the uploaded file.");
+      }
+    };
+    reader.readAsDataURL(file);
+
+    fileInput.value = ""; // reset so same file can be re-selected
+  }
+});
 
 
 let currentModelIndex = 0;

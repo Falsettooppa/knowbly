@@ -117,3 +117,16 @@ body {
     font-size: 0.95rem;
   }
 }
+.file-label {
+  font-size: 1.4rem;
+  color: #555;
+  cursor: pointer;
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.file-label:hover {
+  color: #000;
+}
+
