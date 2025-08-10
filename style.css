@@ -129,4 +129,56 @@ body {
 .file-label:hover {
   color: #000;
 }
+/* ===== Chat History (append to style.css) ===== */
+.chat-history {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.new-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.new-chat-btn i { font-size: 12px; }
+
+.history-list {
+  list-style: none;
+  padding: 8px 0 0 0;
+  margin: 0;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.history-list li {
+  padding: 8px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,0.03);
+  color: #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-list li:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Small-screen tweak so sidebar doesn't hide everything */
+@media (max-width: 768px) {
+  .history-list { max-height: 20vh; }
+}
+  
 
