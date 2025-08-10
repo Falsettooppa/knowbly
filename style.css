@@ -175,6 +175,96 @@ body {
 .history-list li:hover {
   background: rgba(255,255,255,0.06);
 }
+/* Chat history item */
+/* Sidebar chat history items */
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.15s;
+  position: relative;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 14px;
+  overflow: visible !important;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Chat title text */
+.history-item .chat-title {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Inline rename input */
+.history-item input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: inherit;
+  outline: none;
+  padding: 0;
+}
+
+/* Three dots button */
+.menu-btn {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown menu */
+/* dropdown menu (hidden by default) */
+.menu-dropdown {
+  background: #222;
+  color: #fff;
+  border-radius: 6px;
+  min-width: 120px;
+  padding: 6px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  flex-direction: column;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.menu-dropdown div {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menu-dropdown div:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-dropdown.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+
 
 /* Small-screen tweak so sidebar doesn't hide everything */
 @media (max-width: 768px) {

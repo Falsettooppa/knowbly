@@ -251,80 +251,117 @@ function saveSessions() {
 }
 
 function loadChatHistory() {
-  if (!historyListEl) return;
-  historyListEl.innerHTML = "";
+  const historyList = document.getElementById("history-list");
+  historyList.innerHTML = "";
 
-  chatSessions.forEach(sess => {
-    const li = document.createElement('li');
-    li.className = 'history-item';
+  chatSessions.forEach(chat => {
+    const li = document.createElement("li");
+    li.className = "history-item";
 
-    // Chat title span (click to load)
-    const titleSpan = document.createElement('span');
-    titleSpan.textContent = sess.title || 'Untitled Chat';
-    titleSpan.style.cursor = 'pointer';
-    titleSpan.addEventListener('click', (e) => {
-      e.stopPropagation();
-      loadSession(sess.id);
+    // Chat title
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "chat-title";
+    titleSpan.textContent = chat.title;
+    titleSpan.addEventListener("click", () => loadSession(chat.id));
+
+    // Three dots button
+    const menuBtn = document.createElement("button");
+    menuBtn.className = "menu-btn";
+    menuBtn.innerHTML = "&#x22EE;";
+
+    // Dropdown menu
+    const menuDropdown = document.createElement("div");
+    menuDropdown.className = "menu-dropdown";
+
+    // Rename option
+    const renameOption = document.createElement("div");
+    renameOption.textContent = "Rename";
+    renameOption.addEventListener("click", (e) => {
+      e.stopPropagation(); // prevent outside click close
+      menuDropdown.classList.remove("show");
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = chat.title;
+      input.className = "rename-input";
+      li.replaceChild(input, titleSpan);
+      input.focus();
+
+      const saveRename = () => {
+        chat.title = input.value.trim() || chat.title;
+        saveSessions();
+        loadChatHistory();
+      };
+      input.addEventListener("blur", saveRename);
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") input.blur();
+      });
     });
 
-    // Rename button
-    const renameBtn = document.createElement('button');
-    renameBtn.type = 'button';
-    renameBtn.className = 'rename-btn';
-    renameBtn.textContent = '✏️';
-    renameBtn.title = 'Rename';
-    renameBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const newTitle = prompt('Enter new chat title:', sess.title || '');
-      if (newTitle === null) return; // user cancelled
-      const trimmed = newTitle.trim();
-      if (!trimmed) return;
-      sess.title = trimmed;
+    // Delete option
+    const deleteOption = document.createElement("div");
+    deleteOption.textContent = "Delete";
+    deleteOption.addEventListener("click", (e) => {
+      e.stopPropagation(); // prevent outside click close
+      chatSessions = chatSessions.filter(c => c.id !== chat.id);
       saveSessions();
       loadChatHistory();
-      // keep current session view updated if renaming current
-      if (sess.id === currentSessionId) {
-        loadSession(sess.id);
-      }
     });
 
-    // Delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.textContent = '🗑️';
-    deleteBtn.title = 'Delete';
-    deleteBtn.addEventListener('click', (e) => {
+    menuDropdown.appendChild(renameOption);
+    menuDropdown.appendChild(deleteOption);
+
+    // Toggle menu
+    menuBtn.addEventListener("click", e => {
       e.stopPropagation();
-      if (!confirm('Delete this chat? This cannot be undone.')) return;
+      // closeAllMenus();
 
-      const idx = chatSessions.findIndex(s => s.id === sess.id);
-      if (idx === -1) return;
-
-      const wasCurrent = (sess.id === currentSessionId);
-      // remove from array
-      chatSessions.splice(idx, 1);
-      saveSessions();
-
-      if (chatSessions.length === 0) {
-        // no sessions left — create a fresh one
-        createNewSession();
-      } else if (wasCurrent) {
-        // if we deleted the current session, load a neighbour (previous if possible, else first)
-        const nextIdx = Math.max(0, idx - 1);
-        loadSession(chatSessions[nextIdx].id);
+      // Move dropdown to body so it’s not clipped
+      if (menuDropdown.parentElement !== document.body) {
+        document.body.appendChild(menuDropdown);
       }
 
-      loadChatHistory();
+      // Temporarily show to measure
+      menuDropdown.style.position = "absolute";
+      menuDropdown.style.display = "flex";
+      menuDropdown.style.visibility = "hidden";
+
+      requestAnimationFrame(() => {
+        const btnRect = menuBtn.getBoundingClientRect();
+        const ddRect = menuDropdown.getBoundingClientRect();
+
+        let left = btnRect.left + btnRect.width - ddRect.width;
+        left = Math.max(8, Math.min(left, window.innerWidth - ddRect.width - 8));
+
+        const top = btnRect.bottom + window.scrollY + 6;
+
+        menuDropdown.style.left = `${left}px`;
+        menuDropdown.style.top = `${top}px`;
+        menuDropdown.style.visibility = "";
+        menuDropdown.classList.add("show");
+      });
+
+      menuDropdown.addEventListener("click", evt => evt.stopPropagation());
+
+      const outsideHandler = (evt) => {
+        if (!menuDropdown.contains(evt.target) && evt.target !== menuBtn) {
+          menuDropdown.classList.remove("show");
+          menuDropdown.style.display = "";
+          menuDropdown.style.left = "";
+          menuDropdown.style.top = "";
+          document.removeEventListener("click", outsideHandler);
+        }
+      };
+
+      document.addEventListener("click", outsideHandler);
     });
 
-    // Append elements
     li.appendChild(titleSpan);
-    li.appendChild(renameBtn);
-    li.appendChild(deleteBtn);
-    historyListEl.appendChild(li);
+    li.appendChild(menuBtn);
+    historyList.appendChild(li);
   });
 }
+
 
 
 function loadSession(id) {
