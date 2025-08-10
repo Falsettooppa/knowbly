@@ -170,5 +170,44 @@ async function getAIResponse(userMessage) {
     }
   }
 
+
+  // Voice input using Web Speech API
+voiceBtn.addEventListener("click", () => {
+  // Check browser support
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Your browser doesn't support speech recognition");
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+//   const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US"; // language to use
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.start();
+
+  recognition.onstart = () => {
+    voiceBtn.textContent = "Listening...";
+  };
+
+  recognition.onresult = (event) => {
+    const speechText = event.results[0][0].transcript;
+    userInput.value = speechText; // Put speech into input box
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+    alert("Speech recognition error:", event.error);
+  };
+
+  recognition.onend = () => {
+    // voiceBtn.textContent = `<i class="fas fa-microphone"></i>`
+    voiceBtn.innerHTML = `<i class="fas fa-microphone"></i>`
+  };
+});
+
+
 //   end of DOMContentLoaded
 })
