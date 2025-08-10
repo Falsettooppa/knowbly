@@ -243,11 +243,6 @@ voiceBtn.addEventListener("click", () => {
 });
 
 
-/* ========= Added: Chat history UI hookup =========
-   These functions initialize the sidebar history list,
-   handle creating new sessions and loading existing ones.
-   They do not remove or mutate your prior UI elements. */
-
 const historyListEl = document.getElementById('history-list');
 const newChatBtn = document.getElementById('new-chat-btn');
 
@@ -258,16 +253,79 @@ function saveSessions() {
 function loadChatHistory() {
   if (!historyListEl) return;
   historyListEl.innerHTML = "";
+
   chatSessions.forEach(sess => {
     const li = document.createElement('li');
-    li.textContent = sess.title || 'Untitled Chat';
-    li.dataset.id = sess.id;
-    li.addEventListener('click', () => {
+    li.className = 'history-item';
+
+    // Chat title span (click to load)
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = sess.title || 'Untitled Chat';
+    titleSpan.style.cursor = 'pointer';
+    titleSpan.addEventListener('click', (e) => {
+      e.stopPropagation();
       loadSession(sess.id);
     });
+
+    // Rename button
+    const renameBtn = document.createElement('button');
+    renameBtn.type = 'button';
+    renameBtn.className = 'rename-btn';
+    renameBtn.textContent = '✏️';
+    renameBtn.title = 'Rename';
+    renameBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newTitle = prompt('Enter new chat title:', sess.title || '');
+      if (newTitle === null) return; // user cancelled
+      const trimmed = newTitle.trim();
+      if (!trimmed) return;
+      sess.title = trimmed;
+      saveSessions();
+      loadChatHistory();
+      // keep current session view updated if renaming current
+      if (sess.id === currentSessionId) {
+        loadSession(sess.id);
+      }
+    });
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = '🗑️';
+    deleteBtn.title = 'Delete';
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!confirm('Delete this chat? This cannot be undone.')) return;
+
+      const idx = chatSessions.findIndex(s => s.id === sess.id);
+      if (idx === -1) return;
+
+      const wasCurrent = (sess.id === currentSessionId);
+      // remove from array
+      chatSessions.splice(idx, 1);
+      saveSessions();
+
+      if (chatSessions.length === 0) {
+        // no sessions left — create a fresh one
+        createNewSession();
+      } else if (wasCurrent) {
+        // if we deleted the current session, load a neighbour (previous if possible, else first)
+        const nextIdx = Math.max(0, idx - 1);
+        loadSession(chatSessions[nextIdx].id);
+      }
+
+      loadChatHistory();
+    });
+
+    // Append elements
+    li.appendChild(titleSpan);
+    li.appendChild(renameBtn);
+    li.appendChild(deleteBtn);
     historyListEl.appendChild(li);
   });
 }
+
 
 function loadSession(id) {
   const sess = chatSessions.find(s => s.id === id);
