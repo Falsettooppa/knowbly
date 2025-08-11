@@ -279,6 +279,9 @@ function loadChatHistory() {
     renameOption.addEventListener("click", (e) => {
       e.stopPropagation(); // prevent outside click close
       menuDropdown.classList.remove("show");
+menuDropdown.style.display = "";
+menuDropdown.style.left = "";
+menuDropdown.style.top = "";
 
       const input = document.createElement("input");
       input.type = "text";
@@ -301,13 +304,29 @@ function loadChatHistory() {
     // Delete option
     const deleteOption = document.createElement("div");
     deleteOption.textContent = "Delete";
-    deleteOption.addEventListener("click", (e) => {
-      e.stopPropagation(); // prevent outside click close
-      chatSessions = chatSessions.filter(c => c.id !== chat.id);
-      saveSessions();
-      loadChatHistory();
-    });
+    deleteOption.addEventListener("click", () => {
+  // Close menu first
+  menuDropdown.classList.remove("show");
+  menuDropdown.style.display = "";
+  menuDropdown.style.left = "";
+  menuDropdown.style.top = "";
 
+  // Ask confirmation
+  if (confirm(`Delete chat "${chat.title}"? This cannot be undone.`)) {
+    // Remove from in-memory list
+    chatSessions = chatSessions.filter(c => c.id !== chat.id);
+
+    // Save new list to localStorage
+    localStorage.setItem("chatSessions", JSON.stringify(chatSessions));
+
+    // Reload sidebar
+    loadChatHistory();
+  }
+});
+
+
+
+    
     menuDropdown.appendChild(renameOption);
     menuDropdown.appendChild(deleteOption);
 
