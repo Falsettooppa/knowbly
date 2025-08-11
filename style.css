@@ -30,7 +30,7 @@ body {
   align-items: center;
   padding: 2rem 1rem;
   position: relative;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .sidebar .user-profile {
@@ -343,6 +343,14 @@ body {
     font-size: 0.95rem;
   }
 }
+.toggle-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 200; /* high enough to be above sidebar and header */
+  cursor: pointer;
+}
+
 
 /* Hamburger toggle button */
 #sidebar-toggle-btn {
@@ -360,9 +368,50 @@ body {
   z-index: 1001;
   transition: background-color 0.3s ease;
 }
+.sidebar-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 8px;
+    margin: 5px;
+    border-radius: 6px;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 
 #sidebar-toggle-btn:hover,
 #sidebar-toggle-btn:focus {
   background-color: #4a90e2;
   outline: none;
+}
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  z-index: 9999; /* ensures it’s above sidebar */
+  width: max-content; /* fit to content instead of full width */
+  min-width: 120px; /* keep a nice size */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-dropdown button:hover {
+  background: black;
 }
