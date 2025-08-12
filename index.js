@@ -255,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Rename option
       const renameOption = document.createElement("div");
       renameOption.textContent = "Rename";
+      renameOption.className = "rename";
       renameOption.addEventListener("click", (e) => {
         e.stopPropagation();
         menuDropdown.classList.remove("show");
@@ -283,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Delete option
       const deleteOption = document.createElement("div");
       deleteOption.textContent = "Delete";
+      deleteOption.className = "delete";
       deleteOption.addEventListener("click", () => {
         menuDropdown.classList.remove("show");
         menuDropdown.style.display = "";
@@ -293,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
           chatSessions = chatSessions.filter(c => c.id !== chat.id);
           saveSessions();
           loadChatHistory();
+        //   loadMessages()
         }
       });
 
@@ -412,5 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.remove('show');
     document.body.classList.remove('sidebar-open');
   });
+
+  /* DOMContent loaded end */
 });
 

@@ -273,8 +273,14 @@ body {
 
 .menu-dropdown div {
   padding: 8px 12px;
-  color: #eee;
+  color: black;
+  /* color: #eee; */
   cursor: pointer;
+}
+
+.menu-dropdown div.delete {
+  color: red;
+  /* color: #eee; */
 }
 
 .menu-dropdown div:hover,
