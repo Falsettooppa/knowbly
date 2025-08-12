@@ -2,11 +2,18 @@
 .message {
     display: flex;
     margin-bottom: 10px;
+    animation: fadeIn 0.25s ease-in-out;
   }
   
   .message.user {
     justify-content: flex-end;
   }
+  
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
   
   .message.ai {
     justify-content: flex-start;
@@ -18,6 +25,10 @@
     max-width: 70%;
     font-size: 0.95rem;
     line-height: 1.4;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    word-break: break-word;
+    display: inline-block;
   }
   
   .message.user .message-bubble {
@@ -32,3 +43,11 @@
     border-bottom-left-radius: 0;
   }
   
+  /* .rename {
+    color: black;
+    opacity: .8;
+  }
+
+  .delete {
+    color: red;
+  } */
