@@ -142,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== AI reply function =====
   let currentModelIndex = 0; 
   async function getAIResponse(userMessage) { 
-    // const API_KEY = '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'; // grog 
     const API_URL = "https://api.groq.com/openai/v1/chat/completions"; 
     // const API_URL = "https://openrouter.ai/api/v1/chat/completions"; 
     // const API_KEY = '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'; open router 
