@@ -1,3 +1,4 @@
+import { API_KEY } from "./api.js";
 document.addEventListener('DOMContentLoaded', () => {
   // ===== Grab DOM elements =====
   const chatArea = document.getElementById("chat-area");
@@ -139,54 +140,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== AI reply function =====
-  let currentModelIndex = 0;
-  async function getAIResponse(userMessage) {
-    const API_KEY = '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';
-    const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+  let currentModelIndex = 0; 
+  async function getAIResponse(userMessage) { 
+    // const API_KEY = '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'; // grog 
+    const API_URL = "https://api.groq.com/openai/v1/chat/completions"; 
+    // const API_URL = "https://openrouter.ai/api/v1/chat/completions"; 
+    // const API_KEY = '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'; open router 
+    // const freeModels = [ // "mistralai/mistral-7b-instruct:free", // "meta-llama/llama-3.1-8b-instruct:free", // "nousresearch/nous-hermes-2-mistral-7b:free" // ]; 
 
-    const freeModels = [
-      "mistralai/mistral-7b-instruct:free",
-      "meta-llama/llama-3.1-8b-instruct:free",
-      "nousresearch/nous-hermes-2-mistral-7b:free"
-    ];
-
-    const payload = {
-      model: freeModels[currentModelIndex],
-      messages: [
+    // Groq's free models (no :free suffix needed) 
+    const freeModels = [ "llama3-8b-8192", "llama3-70b-8192" ];
+     const payload = { 
+        model: freeModels[currentModelIndex], 
+        messages: [ 
         { role: "system", content: "You are Knowbly, a friendly AI assistant." },
-        { role: "user", content: userMessage }
-      ]
-    };
+        { role: "user", content: userMessage } 
+      ] };
 
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.status === 402) {
-        currentModelIndex++;
-        if (currentModelIndex < freeModels.length) {
-          console.warn(`Model ${payload.model} requires payment, switching to ${freeModels[currentModelIndex]}`);
-          return getAIResponse(userMessage);
-        } else {
-          throw new Error("All free models failed or require payment.");
-        }
-      }
-
-      if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
-
-      const data = await res.json();
-      return data.choices[0].message.content;
-    } catch (err) {
-      console.error("API Error:", err);
-      return "Oops! Something went wrong with the AI service.";
-    }
-  }
+      try { 
+        const res = await fetch(API_URL, { 
+          method: "POST", 
+          headers: { "Authorization": `Bearer ${API_KEY}`, 
+          "Content-Type": "application/json" }, 
+          body: JSON.stringify(payload) 
+        }); 
+          
+          if (!res.ok) {
+             currentModelIndex++; 
+             if (currentModelIndex < freeModels.length) { 
+              console.warn(`Model ${payload.model} requires payment, switching to ${freeModels[currentModelIndex]}`); 
+              return getAIResponse(userMessage); } else {
+                 // throw new Error("All free models failed or require payment."); 
+                 throw new Error(`Groq API error: ${res.status} ${res.statusText}`); } } 
+                 // if (!res.ok) throw new Error(API error: ${res.status} ${res.statusText});
+                 
+                 const data = await res.json(); return data.choices[0].message.content; 
+                }catch (err) { 
+                  console.error("API Error:", err); return "Oops! Something went wrong with the AI service."; 
+              } 
+          }
 
   // ===== Voice input =====
   if (voiceBtn && userInput) {
