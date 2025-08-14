@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentModelIndex = 0; 
   async function getAIResponse(userMessage) { 
     const API_URL = "https://api.groq.com/openai/v1/chat/completions"; 
+    const API_KEYS = API_KEY
     // const API_URL = "https://openrouter.ai/api/v1/chat/completions"; 
     // const API_KEY = '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'; open router 
     // const freeModels = [ // "mistralai/mistral-7b-instruct:free", // "meta-llama/llama-3.1-8b-instruct:free", // "nousresearch/nous-hermes-2-mistral-7b:free" // ]; 
@@ -159,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try { 
         const res = await fetch(API_URL, { 
           method: "POST", 
-          headers: { "Authorization": `Bearer ${API_KEY}`, 
+          headers: { "Authorization": `Bearer ${API_KEYS}`, 
           "Content-Type": "application/json" }, 
           body: JSON.stringify(payload) 
         }); 
